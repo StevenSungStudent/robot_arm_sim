@@ -19,6 +19,13 @@ def generate_launch_description():
                                      description='Absolute path to rviz config file')
     ld.add_action(rviz_arg)
 
+    broadcaster_arg = DeclareLaunchArgument(
+            package='robot_arm_sim',
+            executable='robot_arm_sim',
+            name='sim'
+        )
+    ld.add_action(broadcaster_arg)
+
     # This parameter has changed its meaning slightly from previous versions
     ld.add_action(DeclareLaunchArgument(name='model', default_value=default_model_path,
                                         description='Path to robot urdf file relative to urdf_tutorial package'))

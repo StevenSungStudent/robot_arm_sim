@@ -7,13 +7,44 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+
+
+include_directories(include/${PROJECT_NAME}/)
+
+add_executable(robot_arm_sim 
+  src/main.cpp 
+  src/RobotPosePublisher.cpp
+)
+
+ament_target_dependencies( robot_arm_sim
+  sensor_msgs
+  rclcpp
+  tf2
+  tf2_ros
+)
+
+target_include_directories(robot_arm_sim PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/robot_arm_sim>
+  $<INSTALL_INTERFACE:include>)
+
+
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
 
 install(
   DIRECTORY launch rviz urdf
   DESTINATION share/${PROJECT_NAME}
+)
+
+install(TARGETS robot_arm_sim
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)
