@@ -8,7 +8,7 @@ Deze opdracht is gemaakt door: Steven & William.
 Om het programma te gebruiken moeten de volgende stappen gedaan worden.
 Vergeet ook niet om te source'en in elke terminal.
 
-**NOTE** later zal 
+**NOTE** later zal er nog een launch file gemaakt worden om de sim en het programma tegelijkertijd op te starten.
 
 ## opstarten van de simulatie
 Om de simulatie zelf op te starten moet het volgende commando uitgevoerd worden in de ros workspace:
