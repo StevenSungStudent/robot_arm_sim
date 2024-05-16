@@ -25,13 +25,14 @@ RobotPosePublisher::~RobotPosePublisher()
 }
 
 void RobotPosePublisher::joint_publisher_callback(){
+
     for(unsigned short i = 0; i < joint_states.position.size(); ++i){
         if(current_joint_states.velocity.at(i) < joint_states.velocity.at(i)){
 
             current_joint_states.position.at(i) += (delta_angle.at(i)) / (joint_states.velocity.at(i) / update_frequency);
             current_joint_states.velocity.at(i) += update_frequency;
         }else{
-            current_joint_states = joint_states;
+            // current_joint_states = joint_states;
         }
     }
     current_joint_states.header.stamp = this->get_clock()->now();
@@ -42,13 +43,14 @@ void RobotPosePublisher::command_callback(const std_msgs::msg::String & command)
     std::regex regex_pattern("#(\\d+)P(\\d+)T(\\d+)\r");
     std::smatch match;
 
-    if (std::regex_search(command.data, match, regex_pattern));
+    if (std::regex_search(command.data, match, regex_pattern))
     {
         joint_states.position.at(std::stoi(match.str(1))) = std::stoi(match.str(2));
         joint_states.velocity.at(std::stoi(match.str(1))) = std::stoi(match.str(3));
         current_joint_states.velocity = {0,0,0,0,0,0,0};
         for(unsigned long i = 0; i < joint_states.position.size(); ++i){
             delta_angle.at(i) = joint_states.position.at(i) - current_joint_states.position.at(i);
+            
         }
     }
 
