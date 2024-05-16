@@ -11,8 +11,6 @@ find_package(sensor_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
-
 
 include_directories(include/${PROJECT_NAME}/)
 
