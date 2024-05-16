@@ -25,7 +25,6 @@ RobotPosePublisher::~RobotPosePublisher()
 }
 
 void RobotPosePublisher::joint_publisher_callback(){
-    current_joint_states.header.stamp = this->get_clock()->now();
     for(unsigned short i = 0; i < joint_states.position.size(); ++i){
         if(current_joint_states.velocity.at(i) < joint_states.velocity.at(i)){
 
@@ -35,6 +34,7 @@ void RobotPosePublisher::joint_publisher_callback(){
             current_joint_states = joint_states;
         }
     }
+    current_joint_states.header.stamp = this->get_clock()->now();
     publisher->publish(current_joint_states);
 }
 
