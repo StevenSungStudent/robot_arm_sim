@@ -45,7 +45,7 @@ void RobotPosePublisher::command_callback(const std_msgs::msg::String & command)
 
     if (std::regex_search(command.data, match, regex_pattern))
     {
-        joint_states.position.at(std::stoi(match.str(1))) = std::stoi(match.str(2));
+        joint_states.position.at(std::stoi(match.str(1))) = PWM_to_angle(std::stoi(match.str(2)));
         joint_states.velocity.at(std::stoi(match.str(1))) = std::stoi(match.str(3));
         current_joint_states.velocity = {0,0,0,0,0,0,0};
         for(unsigned long i = 0; i < joint_states.position.size(); ++i){
@@ -56,3 +56,11 @@ void RobotPosePublisher::command_callback(const std_msgs::msg::String & command)
 
 
 }
+
+double RobotPosePublisher::PWM_to_angle(long value){
+    const double MULTIPLIER = 11.11111111112;
+    const double PI_VALUE = 3.14159265359;
+
+    return (((value - 1500) / MULTIPLIER) * PI_VALUE / 180);
+}
+

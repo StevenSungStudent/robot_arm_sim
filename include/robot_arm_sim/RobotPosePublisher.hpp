@@ -30,8 +30,10 @@ private:
     sensor_msgs::msg::JointState joint_states;
     sensor_msgs::msg::JointState current_joint_states;
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription;
+
     void joint_publisher_callback();
     void command_callback(const std_msgs::msg::String & command);
+    double PWM_to_angle(long value);
 };
 
 #endif
