@@ -2,6 +2,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -9,6 +10,7 @@ def generate_launch_description():
 
     urdf_tutorial_path = FindPackageShare('robot_arm_sim')
     default_model_path = PathJoinSubstitution(['urdf', 'lynxmotion_arm.urdf'])
+    default_model_path_mok = PathJoinSubstitution(['urdf', 'mok.urdf'])
     default_rviz_config_path = PathJoinSubstitution([urdf_tutorial_path, 'rviz', 'urdf_config.rviz'])
 
     # These parameters are maintained for backwards compatibility
@@ -19,15 +21,13 @@ def generate_launch_description():
                                      description='Absolute path to rviz config file')
     ld.add_action(rviz_arg)
 
-    broadcaster_arg = DeclareLaunchArgument(
-            package='robot_arm_sim',
-            executable='robot_arm_sim',
-            name='sim'
-        )
-    ld.add_action(broadcaster_arg)
-
     # This parameter has changed its meaning slightly from previous versions
     ld.add_action(DeclareLaunchArgument(name='model', default_value=default_model_path,
+                                        description='Path to robot urdf file relative to urdf_tutorial package'))
+    
+
+    # # This parameter has changed its meaning slightly from previous versions
+    ld.add_action(DeclareLaunchArgument(name='model_mok', default_value=default_model_path_mok,
                                         description='Path to robot urdf file relative to urdf_tutorial package'))
 
     ld.add_action(IncludeLaunchDescription(
@@ -38,5 +38,13 @@ def generate_launch_description():
             'rviz_config': LaunchConfiguration('rvizconfig'),
             'jsp_gui': LaunchConfiguration('gui')}.items()
     ))
+
+    ld.add_action(Node(
+    	    package="robot_arm_sim",
+        	executable="robot_arm_sim",
+            parameters=[]
+    	)
+    )
+
 
     return ld
