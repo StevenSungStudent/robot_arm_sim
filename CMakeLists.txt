@@ -11,12 +11,19 @@ find_package(sensor_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 
 include_directories(include/${PROJECT_NAME}/)
 
 add_executable(robot_arm_sim 
   src/main.cpp 
   src/RobotPosePublisher.cpp
+)
+
+add_executable(cup_pose_publisher 
+  src/cup_pose_publisher_main.cpp
+  src/CupPosePublisher.cpp
 )
 
 ament_target_dependencies( robot_arm_sim
@@ -26,10 +33,24 @@ ament_target_dependencies( robot_arm_sim
   tf2_ros
 )
 
+ament_target_dependencies( cup_pose_publisher
+  geometry_msgs
+  rclcpp
+  std_msgs
+  sensor_msgs
+  tf2
+  tf2_ros
+)
+
 target_include_directories(robot_arm_sim PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/robot_arm_sim>
-  $<INSTALL_INTERFACE:include>)
+  $<INSTALL_INTERFACE:include>
+)
 
+target_include_directories(cup_pose_publisher PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/robot_arm_sim>
+  $<INSTALL_INTERFACE:include>
+)
 
 install(
   DIRECTORY include/
@@ -41,8 +62,14 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
-install(TARGETS robot_arm_sim
+install(TARGETS robot_arm_sim cup_pose_publisher
   DESTINATION lib/${PROJECT_NAME}
+)
+
+install(FILES
+  urdf/lynxmotion_arm.urdf
+  urdf/cup.urdf
+  DESTINATION share/${PROJECT_NAME}/urdf
 )
 
 if(BUILD_TESTING)
@@ -58,4 +85,3 @@ if(BUILD_TESTING)
 endif()
 
 ament_package()
-
