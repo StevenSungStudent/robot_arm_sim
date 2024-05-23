@@ -2,8 +2,9 @@
 <robot name="cup">
   <link name="base_link">
     <visual>
+      <origin xyz="0.3 0.0 0.05" rpy="0 0 0"/>
       <geometry>
-        <cylinder length="0.6" radius="0.2"/>
+        <cylinder length="0.08" radius="0.02"/>
       </geometry>
     </visual>
   </link>

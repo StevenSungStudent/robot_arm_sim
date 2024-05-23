@@ -1,21 +1,20 @@
-// CupPosePublisher.cpp
 #include "CupPosePublisher.hpp"
 
 CupPosePublisher::CupPosePublisher() : Node("cup_pose_publisher"), update_frequency(10)
 {
     publisher = this->create_publisher<geometry_msgs::msg::PoseStamped>("cup_pose", 10);
-    subscription = this->create_subscription<std_msgs::msg::String>("cup_command", 10,
-                        std::bind(&CupPosePublisher::command_callback, this, std::placeholders::_1));
+    subscription = this->create_subscription<std_msgs::msg::String>("cup_command", 10, std::bind(&CupPosePublisher::command_callback, this, std::placeholders::_1));
 
-    // Initialize the cup's pose
     current_pose.header.frame_id = "world";
-    current_pose.pose.position.x = 0.5;
+    current_pose.pose.position.x = 0.3;
     current_pose.pose.position.y = 0.0;
-    current_pose.pose.position.z = 0.35;
-    current_pose.pose.orientation.w = 1.0;
+    current_pose.pose.position.z = 0.05;
+    current_pose.pose.orientation.x = 0.0;
+    current_pose.pose.orientation.y = 0.0;
+    current_pose.pose.orientation.z = 0.0;
+    current_pose.pose.orientation.w = 0.0;
 
-    timer = this->create_wall_timer(std::chrono::milliseconds(1000 / update_frequency),
-                                    std::bind(&CupPosePublisher::pose_publisher_callback, this));
+    timer = this->create_wall_timer(std::chrono::milliseconds(1000 / update_frequency),std::bind(&CupPosePublisher::pose_publisher_callback, this));
 }
 
 CupPosePublisher::~CupPosePublisher() {}
@@ -36,7 +35,7 @@ void CupPosePublisher::command_callback(const std_msgs::msg::String & command)
     {
         position.push_back(std::stof(item));
     }
-
+//checking if its valid
     if (position.size() == 3)
     {
         current_pose.pose.position.x = position[0];
