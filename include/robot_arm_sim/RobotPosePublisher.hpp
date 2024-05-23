@@ -23,7 +23,9 @@ public:
     ~RobotPosePublisher();
 
 private:
-    const unsigned short update_frequency;
+    const unsigned short max_pwm_;
+    const unsigned short min_pwm_;
+    const unsigned short update_frequency_;
     std::vector<double> delta_angle;
     rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr publisher;
     rclcpp::TimerBase::SharedPtr timer;
@@ -34,6 +36,7 @@ private:
     void joint_publisher_callback();
     void command_callback(const std_msgs::msg::String & command);
     double PWM_to_angle(long value);
+    double PWM_to_meter(long value);
 };
 
 #endif

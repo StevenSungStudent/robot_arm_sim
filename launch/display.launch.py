@@ -54,13 +54,12 @@ def generate_launch_description():
 	))
 
     ld.add_action(Node(
-    	    package="robot_arm_sim",
-        	executable="robot_arm_sim",
-            name='robot_arm_sim',
-            output='screen',
-            parameters=[]
-    	)
-    )
-
+        package="robot_arm_sim",
+        executable="robot_arm_sim",
+        name='robot_arm_sim',
+        output='screen',
+        parameters=[]
+    ))
+    
 
     return ld

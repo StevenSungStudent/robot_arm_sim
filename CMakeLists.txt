@@ -22,7 +22,7 @@ add_executable(robot_arm_sim
 )
 
 add_executable(cup_pose_publisher 
-  src/cup_pose_publisher_main.cpp
+  src/CupMain.cpp
   src/CupPosePublisher.cpp
 )
 
