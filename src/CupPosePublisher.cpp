@@ -8,7 +8,7 @@ CupPosePublisher::CupPosePublisher() : Node("cup_pose_publisher"), update_freque
                         std::bind(&CupPosePublisher::command_callback, this, std::placeholders::_1));
 
     // Initialize the cup's pose
-    current_pose.header.frame_id = "world";
+    current_pose.header.frame_id = "base_link";
     current_pose.pose.position.x = 0.5;
     current_pose.pose.position.y = 0.0;
     current_pose.pose.position.z = 0.35;

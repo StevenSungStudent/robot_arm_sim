@@ -6,6 +6,7 @@
 #include <string>
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
+#include "sensor_msgs/msg/joint_state.hpp"
 #include "std_msgs/msg/string.hpp"
 
 class CupPosePublisher : public rclcpp::Node

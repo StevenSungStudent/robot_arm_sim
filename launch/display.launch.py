@@ -10,7 +10,7 @@ def generate_launch_description():
 
     robot_sim_path = FindPackageShare('robot_arm_sim')
     default_robot_model_path = PathJoinSubstitution([robot_sim_path, 'urdf', 'lynxmotion_arm.urdf'])
-    default_mok_model_path = PathJoinSubstitution([robot_sim_path, 'urdf', 'mok.urdf'])
+    default_cup_model_path = PathJoinSubstitution([robot_sim_path, 'urdf', 'cup.urdf'])
     default_rviz_config_path = PathJoinSubstitution([robot_sim_path,'rviz', 'urdf_config.rviz'])
 
     ld.add_action(DeclareLaunchArgument(name='gui', default_value='true', choices=['true', 'false'],
@@ -24,7 +24,7 @@ def generate_launch_description():
                                         description='Path to robot urdf file relative to urdf_tutorial package'))
     
     # # This parameter has changed its meaning slightly from previous versions
-    ld.add_action(DeclareLaunchArgument(name='mok_model', default_value=default_mok_model_path,
+    ld.add_action(DeclareLaunchArgument(name='cup_model', default_value=default_cup_model_path,
                                         description='Path to robot urdf file relative to urdf_tutorial package'))
 
     ld.add_action(Node(
@@ -32,7 +32,7 @@ def generate_launch_description():
 		executable='robot_state_publisher',
 		name='robot_state_publisher_robotarm',
 		output='screen',
-		arguments=[LaunchConfiguration('robot_arm_model')]
+		arguments=[LaunchConfiguration('robot_arm_model')]        
 	))
 
     ld.add_action(Node(
@@ -40,7 +40,8 @@ def generate_launch_description():
 		executable='robot_state_publisher',
 		name='robot_state_publisher_robotarm',
 		output='screen',
-		arguments=[LaunchConfiguration('mok_model')]
+		arguments=[LaunchConfiguration('cup_model')],
+        remappings=[('/robot_description', '/cup_description')]
 	))
 
 
