@@ -60,6 +60,14 @@ def generate_launch_description():
         output='screen',
         parameters=[]
     ))
+
+    ld.add_action(Node(
+        package="robot_arm_sim",
+        executable="cup_pose_publisher",
+        name='cup_pose_publisher',
+        output='screen',
+        parameters=[]
+    ))
     
 
     return ld

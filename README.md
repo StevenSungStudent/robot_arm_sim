@@ -8,22 +8,13 @@ Deze opdracht is gemaakt door: Steven & William.
 Om het programma te gebruiken moeten de volgende stappen gedaan worden.
 Vergeet ook niet om te source'en in elke terminal.
 
-**NOTE** later zal er nog een launch file gemaakt worden om de sim en het programma tegelijkertijd op te starten.
-
 ## opstarten van de simulatie
 Om de simulatie zelf op te starten moet het volgende commando uitgevoerd worden in de ros workspace:
 ```
-ros2 launch robot_arm_sim display.launch.py model:=urdf/lynxmotion_arm.urdf
-```
-**NOTE** nadat rviz is opgestard MOET je de "joint_state_publisher" window afsluiten, dit wordt later opgelost.
-
-## opstarten van het programma zelf
-Om het programma zelf op te starten moet het volgende commando uitgevoerd worden in project folder:
-```
-ros2 run robot_arm_sim robot_arm_sim
+ros2 launch robot_arm_sim display.launch.py
 ```
 ## commando's om de arm te bewegen
 Hier zijn een paar voorbeeld commando's om te zorgen dat de robot arm beweegt.
 ```
-ros2 topic pub --once /command std_msgs/msg/String '{data: "#2P5T2000\r"}'
+ros2 topic pub --once /command std_msgs/msg/String '{data: "#2P1600T2000\r"}'
 ```

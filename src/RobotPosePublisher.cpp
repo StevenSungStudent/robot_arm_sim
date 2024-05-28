@@ -15,6 +15,7 @@ enum joints_index{
 
 RobotPosePublisher::RobotPosePublisher() : 
     Node("pose_publisher"), max_pwm_(2500), min_pwm_(500), update_frequency_(10)
+    // , cup_in_gripper(false)
 {
     publisher = this->create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
 
@@ -24,9 +25,12 @@ RobotPosePublisher::RobotPosePublisher() :
     delta_angle = {0,0,0,0,0,0,0};
 
     current_joint_states = joint_states;
-
+  
+    // tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
+    // tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
     subscription = this->create_subscription<std_msgs::msg::String>("command", 10, std::bind(&RobotPosePublisher::command_callback, this, std::placeholders::_1));
     timer = this->create_wall_timer(std::chrono::milliseconds(update_frequency_),std::bind(&RobotPosePublisher::joint_publisher_callback, this));
+    
 }
 
 RobotPosePublisher::~RobotPosePublisher()
@@ -45,6 +49,8 @@ void RobotPosePublisher::joint_publisher_callback(){
     }
     current_joint_states.header.stamp = this->get_clock()->now();
     publisher->publish(current_joint_states);
+
+    // parse_transform_data();
 }
 
 void RobotPosePublisher::command_callback(const std_msgs::msg::String & command){ 
@@ -71,6 +77,23 @@ void RobotPosePublisher::command_callback(const std_msgs::msg::String & command)
         current_joint_states.velocity = {0,0,0,0,0,0,0};
     }
 }
+
+// void RobotPosePublisher::tf_callback(const tf2_msgs::msg::TFMessage& tf_message){
+//     // tf_message.transforms.
+// }
+
+// void RobotPosePublisher::parse_transform_data(){
+//     geometry_msgs::msg::TransformStamped t;
+
+//     try {
+//         t = tf_buffer_->lookupTransform(
+//         "base_link", "cup_link",
+//         tf2::TimePointZero);
+//         cup_position = t.transform;
+//     } catch (const tf2::TransformException & ex) {
+//         return;
+//     }
+// }
 
 double RobotPosePublisher::PWM_to_angle(long value){
     const double MULTIPLIER = 11.11111111112;
