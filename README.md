@@ -16,5 +16,7 @@ ros2 launch robot_arm_sim display.launch.py
 ## commando's om de arm te bewegen
 Hier zijn een paar voorbeeld commando's om te zorgen dat de robot arm beweegt.
 ```
-ros2 topic pub --once /command std_msgs/msg/String '{data: "#2P1600T2000\r"}'
+ros2 topic pub --once /command std_msgs/msg/String '{data: "#2P1700T2000\r"}'
+ros2 topic pub --once /command std_msgs/msg/String '{data: "#1P1300T2000\r"}'
+ros2 topic pub --once /command std_msgs/msg/String '{data: "#5P1700T2000\r"}'
 ```

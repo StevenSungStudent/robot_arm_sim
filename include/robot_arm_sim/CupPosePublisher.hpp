@@ -38,12 +38,14 @@ private:
     std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
     std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
     geometry_msgs::msg::Transform hand_position;
+    geometry_msgs::msg::Transform previous_hand_position;
     geometry_msgs::msg::Transform gripper_left_position;
     geometry_msgs::msg::Transform gripper_right_position;
 
 
     geometry_msgs::msg::TransformStamped current_pose;
     unsigned short update_frequency;
+    bool cup_gripped;
 };
 
 #endif // CUP_POSE_PUBLISHER_HPP

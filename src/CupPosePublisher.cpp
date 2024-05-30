@@ -1,6 +1,6 @@
 #include "CupPosePublisher.hpp"
 
-CupPosePublisher::CupPosePublisher() : Node("cup_pose_publisher"), update_frequency(10)
+CupPosePublisher::CupPosePublisher() : Node("cup_pose_publisher"), update_frequency(10), cup_gripped(false)
 {
     tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
     
@@ -8,9 +8,9 @@ CupPosePublisher::CupPosePublisher() : Node("cup_pose_publisher"), update_freque
 
     current_pose.header.frame_id = "base_link";
     current_pose.child_frame_id = "cup_link";
-    current_pose.transform.translation.x = 0;
+    current_pose.transform.translation.x = 0.3;
     current_pose.transform.translation.y = 0;
-    current_pose.transform.translation.z = 0;
+    current_pose.transform.translation.z = 0.05;
 
     timer = this->create_wall_timer(std::chrono::milliseconds(1000 / update_frequency),std::bind(&CupPosePublisher::pose_publisher_callback, this));
 
@@ -21,12 +21,15 @@ CupPosePublisher::CupPosePublisher() : Node("cup_pose_publisher"), update_freque
 CupPosePublisher::~CupPosePublisher() {}
 
 void CupPosePublisher::pose_publisher_callback()
-{    current_pose.header.stamp = this->get_clock()->now();
-
-    tf_broadcaster_->sendTransform(current_pose);
+{    
 
     parse_transform_data();
     update_cup_position();
+    
+    current_pose.header.stamp = this->get_clock()->now();
+    tf_broadcaster_->sendTransform(current_pose);
+
+
 }
 
 void CupPosePublisher::command_callback(const std_msgs::msg::String & command)
@@ -35,13 +38,39 @@ void CupPosePublisher::command_callback(const std_msgs::msg::String & command)
 }
 
 void CupPosePublisher::update_cup_position(){
-    const double hand_width = 0.3;
-    const double gripper_distance = 0.3;
+    const double hand_width = 0.05;//TODO: make the it treat the cup like a cylinder instead of a ball.
+    const double gripper_distance = 0.034;//TODO: make this make sense.
     std::cout << "1: " << distance(current_pose.transform, gripper_left_position)  << std::endl;
     std::cout << "2: " << distance(current_pose.transform, hand_position)  << std::endl;
     if(distance(current_pose.transform, gripper_left_position) < gripper_distance && distance(current_pose.transform, gripper_right_position) < gripper_distance && distance(current_pose.transform, hand_position) < hand_width){
         std::cout << "zammmm" << std::endl;
+        cup_gripped = true;
+        
+        current_pose.transform.translation.x += hand_position.translation.x - previous_hand_position.translation.x;
+        current_pose.transform.translation.y += hand_position.translation.y - previous_hand_position.translation.y;
+        current_pose.transform.translation.z += hand_position.translation.z - previous_hand_position.translation.z;
+        current_pose.transform.rotation.x += hand_position.rotation.x - previous_hand_position.rotation.x;
+        current_pose.transform.rotation.y += hand_position.rotation.y - previous_hand_position.rotation.y;
+        current_pose.transform.rotation.z += hand_position.rotation.z - previous_hand_position.rotation.z;
+        current_pose.transform.rotation.w += hand_position.rotation.w - previous_hand_position.rotation.w;
+        std::cout << "x: " << current_pose.transform.translation.x  << std::endl;
+        std::cout << "x prev: " << previous_hand_position.translation.x << std::endl;
+        std::cout << "x now : " << hand_position.translation.x << std::endl;
+        std::cout << "y: " << current_pose.transform.translation.y << std::endl;
+        std::cout << "y prev: " << previous_hand_position.translation.y << std::endl;
+        std::cout << "y now : " << hand_position.translation.y << std::endl;
+        std::cout << "z: " << current_pose.transform.translation.z  << std::endl;
+        std::cout << "z prev: " << previous_hand_position.translation.z << std::endl;
+        std::cout << "z now : " << hand_position.translation.z << std::endl;
+    }else{
+        cup_gripped = false;
     }
+
+    if(cup_gripped){
+
+    }
+
+    previous_hand_position = hand_position;
 }
 
 void CupPosePublisher::parse_transform_data(){
