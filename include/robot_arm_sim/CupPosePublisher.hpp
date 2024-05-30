@@ -28,6 +28,7 @@ private:
     void update_cup_position();
 
     double distance(geometry_msgs::msg::Transform point1, geometry_msgs::msg::Transform point2);
+    double distance_2d(double x1, double y1, double x2, double y2);
 
     // rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr publisher;
     std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
