@@ -3,7 +3,6 @@
 
 int main(int argc, char const *argv[])
 {
-    /* code */
     rclcpp::init(argc, argv);
     rclcpp::spin(std::make_shared<RobotPosePublisher>());
     rclcpp::shutdown();
