@@ -80,6 +80,16 @@ void CupPosePublisher::update_cup_position(){
         current_pose.transform.translation.x = hand_position.translation.x + offset.transform.translation.x;
         current_pose.transform.translation.y = hand_position.translation.y + offset.transform.translation.y;
         current_pose.transform.translation.z = hand_position.translation.z + offset.transform.translation.z;
+
+        is_cup_held = true;
+    } else {
+        is_cup_held = false;
+    }
+
+    if (!is_cup_held) {
+        double new_height = current_pose.transform.translation.z + gravity * (1.0 / update_frequency);
+
+        current_pose.transform.translation.z = std::max(new_height, 0.05);
     }
 
 }

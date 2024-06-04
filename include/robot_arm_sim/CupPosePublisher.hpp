@@ -105,6 +105,17 @@ private:
      * 
      */
     unsigned short update_frequency;
+
+    /**
+     * @brief The const value of gravity.
+     * 
+     */
+    const double gravity = -9.81;
+    /**
+     * @brief Boolean to check if cup is held.
+     * 
+     */
+    bool is_cup_held = false;
 };
 
 #endif // CUP_POSE_PUBLISHER_HPP
