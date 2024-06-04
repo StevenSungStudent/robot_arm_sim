@@ -50,6 +50,7 @@ void RobotPosePublisher::joint_publisher_callback(){
 
 void RobotPosePublisher::command_callback(const std_msgs::msg::String & command){ 
     const std::regex regex_pattern_("#(\\d+)P(\\d+)T(\\d+)\r");
+    const std::regex regex_stop_pattern_ ("STOP[ ](\\d)\r");
     std::smatch match;
 
     if (std::regex_search(command.data, match, regex_pattern_))
@@ -70,6 +71,19 @@ void RobotPosePublisher::command_callback(const std_msgs::msg::String & command)
             
         }
         current_joint_states.velocity = {0,0,0,0,0,0,0};
+
+    }else if(std::regex_search(command.data, match, regex_stop_pattern_)){
+        joint_states.velocity.at(std::stoi(match.str(1))) = current_joint_states.velocity.at(std::stoi(match.str(1)));
+        joint_states.position.at(std::stoi(match.str(1))) = current_joint_states.position.at(std::stoi(match.str(1)));
+        if(std::stoi(match.str(1)) == gripperleft){
+           joint_states.velocity.at(gripperright) = current_joint_states.velocity.at(gripperright);
+           joint_states.position.at(gripperright) = current_joint_states.position.at(gripperright);
+        }
+
+        for(unsigned long i = 0; i < joint_states.position.size(); ++i){
+            delta_angle.at(i) = joint_states.position.at(i) - current_joint_states.position.at(i);
+            
+        }
     }
 }
 

@@ -69,3 +69,8 @@ ros2 topic pub --once /command std_msgs/msg/String '{data: "#5P1600T2000\r"}'
 Beweeg de upperarm naar bevonen:
 ros2 topic pub --once /command std_msgs/msg/String '{data: "#2P1400T2000\r"}'
 ```
+
+Dit het commando om een joint te laten stoppen, in dit geval joint 2 (upperarm):
+```
+ros2 topic pub --once /command std_msgs/msg/String '{data: STOP 2\r"}'
+```
