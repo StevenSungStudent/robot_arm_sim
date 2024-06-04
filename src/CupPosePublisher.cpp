@@ -30,6 +30,32 @@ void CupPosePublisher::pose_publisher_callback()
 
 }
 
+void CupPosePublisher::parse_transform_data(){
+    geometry_msgs::msg::TransformStamped t_hand;
+    geometry_msgs::msg::TransformStamped t_gripper_left;
+    geometry_msgs::msg::TransformStamped t_gripper_right;
+
+    try {
+        t_hand = tf_buffer_->lookupTransform(
+        "base_link", "hand",
+        tf2::TimePointZero);
+        hand_position = t_hand.transform;
+
+        t_gripper_left = tf_buffer_->lookupTransform(
+        "base_link", "gripper_left",
+        tf2::TimePointZero);
+        gripper_left_position = t_gripper_left.transform;
+
+        t_gripper_right = tf_buffer_->lookupTransform(
+        "base_link", "gripper_right",
+        tf2::TimePointZero);
+        gripper_right_position = t_gripper_right.transform;
+
+    } catch (const tf2::TransformException & ex) {
+        return;
+    }
+}
+
 void CupPosePublisher::update_cup_position(){
     const double gripper_distance_ = 0.04;
     const double gripper_joint_offset_ = 0.02;
@@ -57,32 +83,6 @@ void CupPosePublisher::update_cup_position(){
         current_pose.transform.translation.z = hand_position.translation.z + offset.transform.translation.z;
     }
 
-}
-
-void CupPosePublisher::parse_transform_data(){
-    geometry_msgs::msg::TransformStamped t_hand;
-    geometry_msgs::msg::TransformStamped t_gripper_left;
-    geometry_msgs::msg::TransformStamped t_gripper_right;
-
-    try {
-        t_hand = tf_buffer_->lookupTransform(
-        "base_link", "hand",
-        tf2::TimePointZero);
-        hand_position = t_hand.transform;
-
-        t_gripper_left = tf_buffer_->lookupTransform(
-        "base_link", "gripper_left",
-        tf2::TimePointZero);
-        gripper_left_position = t_gripper_left.transform;
-
-        t_gripper_right = tf_buffer_->lookupTransform(
-        "base_link", "gripper_right",
-        tf2::TimePointZero);
-        gripper_right_position = t_gripper_right.transform;
-
-    } catch (const tf2::TransformException & ex) {
-        return;
-    }
 }
 
 double CupPosePublisher::distance_2d(double x1, double y1, double x2, double y2) {
