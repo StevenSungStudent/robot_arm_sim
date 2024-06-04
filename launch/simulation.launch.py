@@ -19,11 +19,9 @@ def generate_launch_description():
     ld.add_action(DeclareLaunchArgument(name='rvizconfig', default_value=default_rviz_config_path,
                                      description='Absolute path to rviz config file'))
 
-    # This parameter has changed its meaning slightly from previous versions
     ld.add_action(DeclareLaunchArgument(name='robot_arm_model', default_value=default_robot_model_path,
                                         description='Path to robot urdf file relative to urdf_tutorial package'))
     
-    # # This parameter has changed its meaning slightly from previous versions
     ld.add_action(DeclareLaunchArgument(name='cup_model', default_value=default_cup_model_path,
                                         description='Path to robot urdf file relative to urdf_tutorial package'))
 
