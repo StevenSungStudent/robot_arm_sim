@@ -55,15 +55,16 @@ void RobotPosePublisher::command_callback(const std_msgs::msg::String & command)
 
     if (std::regex_search(command.data, match, regex_pattern_))
     {
+        long pwm_value = std::max(RobotPosePublisher::MIN_PWM_VALUE, std::min(RobotPosePublisher::MAX_PWM_VALUE, std::stoi(match.str(2))));
+
         joint_states.velocity.at(std::stoi(match.str(1))) = std::stoi(match.str(3));
 
         if(std::stoi(match.str(1)) == gripperleft){
-           joint_states.position.at(gripperleft) = PWM_to_meter(std::stoi(match.str(2)));
-           joint_states.position.at(gripperright) = joint_states.position.at(gripperleft);
-           joint_states.velocity.at(gripperright) = joint_states.velocity.at(gripperleft);
-
+            joint_states.position.at(gripperleft) = PWM_to_meter(pwm_value);
+            joint_states.position.at(gripperright) = joint_states.position.at(gripperleft);
+            joint_states.velocity.at(gripperright) = joint_states.velocity.at(gripperleft);
         }else{
-            joint_states.position.at(std::stoi(match.str(1))) = PWM_to_angle(std::stoi(match.str(2)));
+            joint_states.position.at(std::stoi(match.str(1))) = PWM_to_angle(pwm_value);
         }
 
         for(unsigned long i = 0; i < joint_states.position.size(); ++i){
@@ -71,21 +72,20 @@ void RobotPosePublisher::command_callback(const std_msgs::msg::String & command)
             
         }
         current_joint_states.velocity = {0,0,0,0,0,0,0};
-
     }else if(std::regex_search(command.data, match, regex_stop_pattern_)){
         joint_states.velocity.at(std::stoi(match.str(1))) = current_joint_states.velocity.at(std::stoi(match.str(1)));
         joint_states.position.at(std::stoi(match.str(1))) = current_joint_states.position.at(std::stoi(match.str(1)));
         if(std::stoi(match.str(1)) == gripperleft){
-           joint_states.velocity.at(gripperright) = current_joint_states.velocity.at(gripperright);
-           joint_states.position.at(gripperright) = current_joint_states.position.at(gripperright);
+            joint_states.velocity.at(gripperright) = current_joint_states.velocity.at(gripperright);
+            joint_states.position.at(gripperright) = current_joint_states.position.at(gripperright);
         }
 
         for(unsigned long i = 0; i < joint_states.position.size(); ++i){
             delta_angle.at(i) = joint_states.position.at(i) - current_joint_states.position.at(i);
-            
         }
     }
 }
+
 
 double RobotPosePublisher::PWM_to_angle(const long& value) const{
     const double MULTIPLIER = 11.11111111112;

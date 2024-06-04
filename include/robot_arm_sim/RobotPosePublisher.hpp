@@ -109,6 +109,18 @@ private:
      * 
      */
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription;
+
+    /**
+     * @brief The subscription to the command topic.
+     * 
+     */
+    const int MAX_PWM_VALUE = 2500;
+
+    /**
+     * @brief The subscription to the command topic.
+     * 
+     */
+    const int MIN_PWM_VALUE = 500;
 };
 
 #endif
