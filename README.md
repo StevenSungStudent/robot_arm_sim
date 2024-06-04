@@ -30,10 +30,16 @@ Voor source'en:
 Om het programma te gebruiken moeten de volgende stappen gedaan worden.
 Vergeet ook niet om te source'en in elke terminal.
 
+## Demo script
+Er is een demoscript geschreven voor het programma die de mok oppakt. Run het volgende commando vannuit de workspace folder:
+```
+. robot_arm_sim/demo.bash
+```
+
 ## opstarten van de simulatie
 Om de simulatie zelf op te starten moet het volgende commando uitgevoerd worden in de ros workspace:
 ```
-ros2 launch robot_arm_sim display.launch.py
+ros2 launch robot_arm_sim simulation.launch.py
 ```
 ## commando's om de arm te bewegen
 Het programma neemt commandos die overeen komen met de interface van de daadwerkelijke robot arm.

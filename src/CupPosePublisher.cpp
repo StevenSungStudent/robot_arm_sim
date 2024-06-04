@@ -20,14 +20,13 @@ CupPosePublisher::~CupPosePublisher() {}
 
 void CupPosePublisher::pose_publisher_callback()
 {    
-
+    RCLCPP_INFO_STREAM(get_logger(), "test" );
     parse_transform_data();
     update_cup_position();
     
     current_pose.header.stamp = this->get_clock()->now();
     tf_broadcaster_->sendTransform(current_pose);
-
-
+    RCLCPP_INFO_STREAM(get_logger(), "x: " << current_pose.transform.translation.x << " | y: " << current_pose.transform.translation.y );
 }
 
 void CupPosePublisher::parse_transform_data(){
