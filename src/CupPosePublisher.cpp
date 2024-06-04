@@ -4,8 +4,6 @@ CupPosePublisher::CupPosePublisher() : Node("cup_pose_publisher"), update_freque
 {
     tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
     
-    subscription = this->create_subscription<std_msgs::msg::String>("cup_command", 10, std::bind(&CupPosePublisher::command_callback, this, std::placeholders::_1));
-
     current_pose.header.frame_id = "base_link";
     current_pose.child_frame_id = "cup_link";
     current_pose.transform.translation.x = 0.3;
@@ -29,11 +27,6 @@ void CupPosePublisher::pose_publisher_callback()
     current_pose.header.stamp = this->get_clock()->now();
     tf_broadcaster_->sendTransform(current_pose);
 
-
-}
-
-void CupPosePublisher::command_callback(const std_msgs::msg::String & command)
-{
 
 }
 
@@ -90,10 +83,6 @@ void CupPosePublisher::parse_transform_data(){
     } catch (const tf2::TransformException & ex) {
         return;
     }
-}
-
-double CupPosePublisher::distance(geometry_msgs::msg::Transform point1, geometry_msgs::msg::Transform point2){
-    return (sqrt(pow(point2.translation.x - point1.translation.x, 2) +  pow(point2.translation.y - point1.translation.y, 2) +  pow(point2.translation.z - point1.translation.z, 2) * 1.0));
 }
 
 double CupPosePublisher::distance_2d(double x1, double y1, double x2, double y2) {
