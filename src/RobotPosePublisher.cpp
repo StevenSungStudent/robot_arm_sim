@@ -1,6 +1,7 @@
 #include "RobotPosePublisher.hpp"
 #include <regex>
 #include <vector>
+#include <algorithm>
 
 enum joints_index{
     base = 0,
@@ -13,7 +14,7 @@ enum joints_index{
 };
 
 RobotPosePublisher::RobotPosePublisher() : 
-    Node("pose_publisher"), max_pwm_(2500), min_pwm_(500), update_frequency_(10)
+    Node("pose_publisher"), max_pwm_(2000), min_pwm_(500), update_frequency_(10)
 {
     publisher = this->create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
 
@@ -55,7 +56,7 @@ void RobotPosePublisher::command_callback(const std_msgs::msg::String & command)
 
     if (std::regex_search(command.data, match, regex_pattern_))
     {
-        long pwm_value = std::max(RobotPosePublisher::MIN_PWM_VALUE, std::min(RobotPosePublisher::MAX_PWM_VALUE, std::stoi(match.str(2))));
+        long pwm_value = std::min(static_cast<long>(max_pwm_), std::max(static_cast<long>(min_pwm_), static_cast<long>(std::stoi(match.str(2)))));
 
         joint_states.velocity.at(std::stoi(match.str(1))) = std::stoi(match.str(3));
 
