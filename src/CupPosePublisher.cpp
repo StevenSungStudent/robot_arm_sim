@@ -25,7 +25,6 @@ void CupPosePublisher::pose_publisher_callback()
     
     current_pose.header.stamp = this->get_clock()->now();
     tf_broadcaster_->sendTransform(current_pose);
-    // RCLCPP_INFO_STREAM(get_logger(), "x: " << current_pose.transform.translation.x << " | y: " << current_pose.transform.translation.y );
 }
 
 void CupPosePublisher::parse_transform_data(){
@@ -59,8 +58,11 @@ void CupPosePublisher::update_cup_position(){
     const double gripper_joint_offset_ = 0.02;
     const double cup_height_ = 0.08;
     const double cup_width_ = 0.03;
+    const double cup_floor = 0.05;
 
     static bool offset_set = false;
+    static double velocity = 0;
+
     static geometry_msgs::msg::TransformStamped offset;
 
     if( 
@@ -81,14 +83,15 @@ void CupPosePublisher::update_cup_position(){
         current_pose.transform.translation.z = hand_position.translation.z + offset.transform.translation.z;
 
     } else {
-
-        double new_height = current_pose.transform.translation.z - gravity * (1.0 / update_frequency);
-
-            RCLCPP_INFO_STREAM(get_logger(), "current z: " << current_pose.transform.translation.z << " | grav: " << gravity * (1.0 / update_frequency) << " | new height: " << new_height);
-
-        current_pose.transform.translation.z = std::max(new_height, 0.05);
+        
+        velocity -= gravity * (1.0 / update_frequency);
+        current_pose.transform.translation.z += velocity * (1.0 / update_frequency);
     }
 
+    if(current_pose.transform.translation.z < cup_floor){
+        current_pose.transform.translation.z = cup_floor;
+        velocity = 0;
+    }
 }
 
 double CupPosePublisher::distance_2d(double x1, double y1, double x2, double y2) {
