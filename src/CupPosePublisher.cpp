@@ -1,6 +1,6 @@
 #include "CupPosePublisher.hpp"
 
-CupPosePublisher::CupPosePublisher() : Node("cup_pose_publisher"), update_frequency(10)
+CupPosePublisher::CupPosePublisher() : Node("cup_pose_publisher"), update_frequency(100)
 {
     tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
     
@@ -20,13 +20,12 @@ CupPosePublisher::~CupPosePublisher() {}
 
 void CupPosePublisher::pose_publisher_callback()
 {    
-    RCLCPP_INFO_STREAM(get_logger(), "test" );
     parse_transform_data();
     update_cup_position();
     
     current_pose.header.stamp = this->get_clock()->now();
     tf_broadcaster_->sendTransform(current_pose);
-    RCLCPP_INFO_STREAM(get_logger(), "x: " << current_pose.transform.translation.x << " | y: " << current_pose.transform.translation.y );
+    // RCLCPP_INFO_STREAM(get_logger(), "x: " << current_pose.transform.translation.x << " | y: " << current_pose.transform.translation.y );
 }
 
 void CupPosePublisher::parse_transform_data(){
@@ -81,13 +80,11 @@ void CupPosePublisher::update_cup_position(){
         current_pose.transform.translation.y = hand_position.translation.y + offset.transform.translation.y;
         current_pose.transform.translation.z = hand_position.translation.z + offset.transform.translation.z;
 
-        is_cup_held = true;
     } else {
-        is_cup_held = false;
-    }
 
-    if (!is_cup_held) {
-        double new_height = current_pose.transform.translation.z + gravity * (1.0 / update_frequency);
+        double new_height = current_pose.transform.translation.z - gravity * (1.0 / update_frequency);
+
+            RCLCPP_INFO_STREAM(get_logger(), "current z: " << current_pose.transform.translation.z << " | grav: " << gravity * (1.0 / update_frequency) << " | new height: " << new_height);
 
         current_pose.transform.translation.z = std::max(new_height, 0.05);
     }

@@ -110,7 +110,7 @@ private:
      * @brief The const value of gravity.
      * 
      */
-    const double gravity = -9.81;
+    const double gravity = 9.81;
     /**
      * @brief Boolean to check if cup is held.
      * 
