@@ -1,7 +1,8 @@
 #include "RobotPosePublisher.hpp"
 #include <regex>
 #include <vector>
-#include <algorithm>
+#include <algorithm> 
+
 
 enum joints_index{
     base = 0,
@@ -14,7 +15,7 @@ enum joints_index{
 };
 
 RobotPosePublisher::RobotPosePublisher() : 
-    Node("pose_publisher"), max_pwm_(2000), min_pwm_(500), update_frequency_(10)
+    Node("pose_publisher"), max_pwm_(2500), min_pwm_(500), update_frequency_(10)
 {
     publisher = this->create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
 
@@ -56,16 +57,15 @@ void RobotPosePublisher::command_callback(const std_msgs::msg::String & command)
 
     if (std::regex_search(command.data, match, regex_pattern_))
     {
-        long pwm_value = std::min(static_cast<long>(max_pwm_), std::max(static_cast<long>(min_pwm_), static_cast<long>(std::stoi(match.str(2)))));
-
         joint_states.velocity.at(std::stoi(match.str(1))) = std::stoi(match.str(3));
 
         if(std::stoi(match.str(1)) == gripperleft){
-            joint_states.position.at(gripperleft) = PWM_to_meter(pwm_value);
-            joint_states.position.at(gripperright) = joint_states.position.at(gripperleft);
-            joint_states.velocity.at(gripperright) = joint_states.velocity.at(gripperleft);
+           joint_states.position.at(gripperleft) = PWM_to_meter(std::stoi(match.str(2)));
+           joint_states.position.at(gripperright) = joint_states.position.at(gripperleft);
+           joint_states.velocity.at(gripperright) = joint_states.velocity.at(gripperleft);
+
         }else{
-            joint_states.position.at(std::stoi(match.str(1))) = PWM_to_angle(pwm_value);
+            joint_states.position.at(std::stoi(match.str(1))) = PWM_to_angle(std::stoi(match.str(2)));
         }
 
         for(unsigned long i = 0; i < joint_states.position.size(); ++i){
@@ -73,27 +73,33 @@ void RobotPosePublisher::command_callback(const std_msgs::msg::String & command)
             
         }
         current_joint_states.velocity = {0,0,0,0,0,0,0};
+
     }else if(std::regex_search(command.data, match, regex_stop_pattern_)){
         joint_states.velocity.at(std::stoi(match.str(1))) = current_joint_states.velocity.at(std::stoi(match.str(1)));
         joint_states.position.at(std::stoi(match.str(1))) = current_joint_states.position.at(std::stoi(match.str(1)));
         if(std::stoi(match.str(1)) == gripperleft){
-            joint_states.velocity.at(gripperright) = current_joint_states.velocity.at(gripperright);
-            joint_states.position.at(gripperright) = current_joint_states.position.at(gripperright);
+           joint_states.velocity.at(gripperright) = current_joint_states.velocity.at(gripperright);
+           joint_states.position.at(gripperright) = current_joint_states.position.at(gripperright);
         }
 
         for(unsigned long i = 0; i < joint_states.position.size(); ++i){
             delta_angle.at(i) = joint_states.position.at(i) - current_joint_states.position.at(i);
+            
         }
     }
 }
 
 
-double RobotPosePublisher::PWM_to_angle(const long& value) const{
+
+double RobotPosePublisher::PWM_to_angle(const long& value) const {
     const double MULTIPLIER = 11.11111111112;
     const double PI_VALUE = 3.14159265359;
 
-    return (((value - 1500) / MULTIPLIER) * PI_VALUE / 180);
+    long constrained_value = std::clamp(value, 500L, 2500L);
+
+    return (((constrained_value - 1500) / MULTIPLIER) * PI_VALUE / 180);
 }
+
 
 double RobotPosePublisher::PWM_to_meter(const long& value) const{
     const double max_ = 0.015;
